@@ -1,0 +1,51 @@
+name: "Terraform CI/CD"
+
+on:
+  push:
+    branches: [ main ]
+  # Adding manual trigger for destroy
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Terraform Action'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+        - apply
+        - destroy
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
+    - name: Terraform Init
+      run: |
+        cd terraform
+        terraform init
+
+    - name: Terraform Plan
+      run: |
+        cd terraform
+        terraform plan
+
+    - name: Terraform Action
+      run: |
+        cd terraform
+        if [[ "${{ github.event.inputs.action }}" == "destroy" ]]; then
+          terraform destroy -auto-approve
+        else
+          terraform apply -auto-approve
+        fi
