@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+.env
+
+# Build
+build/
+dist/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# AWS
+.aws/
