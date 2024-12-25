@@ -43,7 +43,7 @@ jobs:
         aws dynamodb list-tables | grep grad-vault || echo "No DynamoDB table found"
     - name: Terraform Plan
       if: github.event.inputs.action != 'destroy'
-        run: |
+      run: |
           cd terraform
           terraform plan
 
