@@ -35,11 +35,17 @@ jobs:
         cd terraform
         terraform init
 
+    - name: Check AWS Resources
+      run: |
+      cd terraform
+      echo "Checking existing AWS resources..."
+      aws s3 ls | grep grad-vault || echo "No S3 bucket found"
+      aws dynamodb list-tables | grep grad-vault || echo "No DynamoDB table found"
     - name: Terraform Plan
       if: github.event.inputs.action != 'destroy'
-      run: |
-        cd terraform
-        terraform plan
+        run: |
+          cd terraform
+          terraform plan
 
     - name: Terraform Apply
       if: github.event.inputs.action != 'destroy'
@@ -51,5 +57,4 @@ jobs:
       if: github.event.inputs.action == 'destroy'
       run: |
         cd terraform
-        terraform plan -destroy -out=destroy.tfplan
-        terraform apply "destroy.tfplan"
+        terraform destroy -auto-approve
