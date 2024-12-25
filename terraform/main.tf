@@ -11,7 +11,7 @@ resource "aws_s3_bucket" "grad_vault" {
 resource "aws_s3_bucket_versioning" "grad_vault" {
   bucket = aws_s3_bucket.grad_vault.id
   versioning_configuration {
-    status = "Enabled"
+    status = "Disabled"
   }
 }
 
