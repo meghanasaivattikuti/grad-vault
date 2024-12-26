@@ -1,8 +1,6 @@
 name: "Terraform CI/CD"
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
     inputs:
       action:
@@ -30,31 +28,48 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
-    - name: Terraform Init
+    # Apply Flow
+    - name: Terraform Apply Steps
+      if: github.event.inputs.action == 'apply'
       run: |
         cd terraform
+        
+        echo "Creating state bucket..."
+        aws s3api create-bucket \
+          --bucket grad-vault-tfstate \
+          --region us-east-1 || true
+        
+        echo "Initializing Terraform..."
         terraform init
+        
+        echo "Planning..."
+        terraform plan
+        
+        echo "Applying..."
+        if terraform apply -auto-approve; then
+          echo "Apply successful"
+        else
+          echo "Apply failed, cleaning up state bucket..."
+          aws s3 rm s3://grad-vault-tfstate/terraform.tfstate || true
+          aws s3api delete-bucket --bucket grad-vault-tfstate --region us-east-1 || true
+          exit 1
+        fi
 
-    - name: Check AWS Resources
-      run: |
-
-        echo "Checking existing AWS resources..."
-        aws s3 ls | grep grad-vault || echo "No S3 bucket found"
-        aws dynamodb list-tables | grep grad-vault || echo "No DynamoDB table found"
-    - name: Terraform Plan
-      if: github.event.inputs.action != 'destroy'
-      run: |
-          cd terraform
-          terraform plan
-
-    - name: Terraform Apply
-      if: github.event.inputs.action != 'destroy'
-      run: |
-        cd terraform
-        terraform apply -auto-approve
-
-    - name: Terraform Destroy
+    # Destroy Flow
+    - name: Terraform Destroy Steps
       if: github.event.inputs.action == 'destroy'
       run: |
         cd terraform
-        terraform destroy -auto-approve
+        
+        echo "Initializing Terraform..."
+        terraform init
+        
+        echo "Destroying resources..."
+        if terraform destroy -auto-approve; then
+          echo "Destroy successful, cleaning up state..."
+          aws s3 rm s3://grad-vault-tfstate/terraform.tfstate || true
+          aws s3api delete-bucket --bucket grad-vault-tfstate --region us-east-1 || true
+        else
+          echo "Destroy failed"
+          exit 1
+        fi
