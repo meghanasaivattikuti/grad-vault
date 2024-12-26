@@ -8,7 +8,7 @@ on:
       action:
         description: 'Terraform Action'
         required: true
-        default: 'destroy'  # Changed to destroy since this trigger is for destroy only
+        default: 'destroy'
         type: choice
         options:
         - destroy
@@ -34,12 +34,6 @@ jobs:
       if: github.event_name == 'pull_request'
       run: |
         cd terraform
-        
-        echo "Creating state bucket..."
-        aws s3api create-bucket \
-          --bucket grad-vault-tfstate \
-          --region us-west-1 || true
-        
         echo "Initializing Terraform..."
         terraform init -reconfigure
         
@@ -54,13 +48,14 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       run: |
         cd terraform
-        
         echo "Initializing Terraform..."
         terraform init -reconfigure
         
         echo "Destroying resources..."
         terraform destroy -auto-approve
         
-        echo "Cleaning up state bucket..."
-        aws s3 rm s3://grad-vault-tfstate/terraform.tfstate || true
-        aws s3api delete-bucket --bucket grad-vault-tfstate --region us-west-1 || true
+        echo "Cleaning up state file..."
+        aws s3 rm s3://grad-vault-tfstate/terraform.tfstate
+        
+        echo "Deleting state bucket..."
+        aws s3api delete-bucket --bucket grad-vault-tfstate --region us-east-1
