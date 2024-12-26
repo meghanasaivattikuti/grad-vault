@@ -22,11 +22,11 @@ A secure digital document management system for organizing and storing academic 
 
 ## 🔧 Quick Start
 
-    Clone the repository
+    Clone the repository using HTTPS
 
     git clone https://github.com/yourusername/grad-vault.git
 
-    cd grad-vault
+    cd grad-vault 
 
     Setup frontend
 
