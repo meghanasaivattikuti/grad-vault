@@ -26,10 +26,10 @@ const Upload = () => {
         }
       });
 
-      // Create file path
+      //  file path
       const fileName = `${metadata.semester}/${metadata.subject}/${file.name}`;
 
-      // Create upload command
+      //  upload command
       const command = new PutObjectCommand({
         Bucket: process.env.REACT_APP_S3_BUCKET,
         Key: fileName,
@@ -40,7 +40,6 @@ const Upload = () => {
         }
       });
 
-      // Upload file
       await s3Client.send(command);
       setUploadStatus('Upload Successful!');
       console.log('File uploaded successfully');

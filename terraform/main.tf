@@ -4,10 +4,10 @@ provider "aws" {
 # S3 bucket
 resource "aws_s3_bucket" "grad_vault" {
   bucket = "grad-vault-storage-dev"
-  force_destroy = true  # This allows terraform to empty the bucket when destroying
+  force_destroy = true 
 }
 
-# Enable versioning
+# Disable versioning
 resource "aws_s3_bucket_versioning" "grad_vault" {
   bucket = aws_s3_bucket.grad_vault.id
   versioning_configuration {
@@ -25,7 +25,7 @@ resource "aws_s3_bucket_public_access_block" "grad_vault" {
   restrict_public_buckets = false
 }
 
-# Add bucket policy
+#  bucket policy
 resource "aws_s3_bucket_policy" "allow_access" {
   depends_on = [aws_s3_bucket_public_access_block.grad_vault]
   bucket = aws_s3_bucket.grad_vault.id
