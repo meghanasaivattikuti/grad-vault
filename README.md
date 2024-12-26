@@ -2,6 +2,9 @@
 
 A secure digital document management system for organizing and storing academic materials using AWS S3, Terraform, and React.
 
+![GradVault Demo](assets/demo.gif)
+
+
 ## 🚀 Features
 - Upload and organize academic documents by semester
 - Categorize materials (assignments, projects, research papers)
