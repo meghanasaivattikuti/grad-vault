@@ -29,9 +29,24 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
-    # Automatic Apply on PR to main
-    - name: Terraform Apply
+    # Add check for [infra] in PR title
+    - name: Check if infrastructure changes needed
+      id: check_apply
       if: github.event_name == 'pull_request'
+      run: |
+        PR_TITLE="${{ github.event.pull_request.title }}"
+        if [[ $PR_TITLE == *"[infra]"* ]]; then
+          echo "should_apply=true" >> $GITHUB_OUTPUT
+        else
+          echo "should_apply=false" >> $GITHUB_OUTPUT
+          echo "No infrastructure changes needed - PR title doesn't contain [infra]"
+        fi
+
+    # Update Apply condition to check PR title
+    - name: Terraform Apply
+      if: |
+        github.event_name == 'pull_request' && 
+        steps.check_apply.outputs.should_apply == 'true'
       run: |
         cd terraform
         echo "Initializing Terraform..."
@@ -43,7 +58,7 @@ jobs:
         echo "Applying..."
         terraform apply -auto-approve
 
-    # Manual Destroy Only
+    # Manual Destroy remains unchanged
     - name: Terraform Destroy
       if: github.event_name == 'workflow_dispatch'
       run: |
