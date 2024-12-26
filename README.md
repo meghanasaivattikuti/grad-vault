@@ -40,8 +40,7 @@ Setup frontend
     REACT_APP_AWS_SECRET_ACCESS_KEY=your_secret_key
     REACT_APP_S3_BUCKET=bucket_name
 
-    Start the application
-    npm start
+    Start the application - npm start
 
 ## ⚙️ Infrastructure Management
 Infrastructure deploys automatically on main branch merges
