@@ -89,6 +89,7 @@ const Upload = () => {
             <MenuItem value="WD">Web Development</MenuItem>
             <MenuItem value="Research">Research Papers</MenuItem>
             <MenuItem value="Information">Information</MenuItem>
+            <MenuItem value="Thesis">Thesis</MenuItem>
         </Select>
 
         <input
