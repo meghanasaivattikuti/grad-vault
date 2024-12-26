@@ -23,25 +23,25 @@ A secure digital document management system for organizing and storing academic 
 ## 🔧 Quick Start
 Clone the repository
 
-git clone https://github.com/yourusername/grad-vault.git
+    git clone https://github.com/yourusername/grad-vault.git
 
-cd grad-vault
+    cd grad-vault
 
 Setup frontend
 
-cd frontend
+    cd frontend
 
-npm install
+    npm install
 
-Create .env file in frontend directory
-Include these below: 
-REACT_APP_AWS_REGION=us-east-1
-REACT_APP_AWS_ACCESS_KEY_ID=your_access_key
-REACT_APP_AWS_SECRET_ACCESS_KEY=your_secret_key
-REACT_APP_S3_BUCKET=bucket_name
+    Create .env file in frontend directory
+    Include these below: 
+    REACT_APP_AWS_REGION=us-east-1
+    REACT_APP_AWS_ACCESS_KEY_ID=your_access_key
+    REACT_APP_AWS_SECRET_ACCESS_KEY=your_secret_key
+    REACT_APP_S3_BUCKET=bucket_name
 
-Start the application
-npm start
+    Start the application
+    npm start
 
 ## ⚙️ Infrastructure Management
 Infrastructure deploys automatically on main branch merges
@@ -52,7 +52,8 @@ To destroy infrastructure:
 4. Select "destroy"
 5. Confirm "Run workflow"
 
-Important Notes
+## Important Notes
+
 Never commit .env file
 Run terraform destroy when not in use to avoid charges
 Configure CORS for localhost:3000
