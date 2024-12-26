@@ -45,6 +45,7 @@ Setup frontend
 
 ## ⚙️ Infrastructure Management
 Infrastructure deploys automatically on main branch merges
+
 To destroy infrastructure:
 1. Navigate to GitHub Actions
 2. Select "Terraform CI/CD"
