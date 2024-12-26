@@ -69,6 +69,7 @@ const Upload = () => {
             <MenuItem value="Fall 2023">Fall 2023</MenuItem>
             <MenuItem value="Spring 2024">Spring 2024</MenuItem>
             <MenuItem value="Summer 2024">Summer 2024</MenuItem>
+            
         </Select>
 
         <Select
@@ -87,6 +88,7 @@ const Upload = () => {
             <MenuItem value="ABI">Advanced Big Data Indexing</MenuItem>
             <MenuItem value="WD">Web Development</MenuItem>
             <MenuItem value="Research">Research Papers</MenuItem>
+            <MenuItem value="Research">Information</MenuItem>
         </Select>
 
         <input
