@@ -58,7 +58,7 @@ jobs:
         echo "Applying..."
         terraform apply -auto-approve
 
-    # Manual Destroy remains unchanged
+    # Manual Destroy - only removes resources and state file, keeps bucket
     - name: Terraform Destroy
       if: github.event_name == 'workflow_dispatch'
       run: |
@@ -71,6 +71,3 @@ jobs:
         
         echo "Cleaning up state file..."
         aws s3 rm s3://grad-vault-tfstate/terraform.tfstate
-        
-        echo "Deleting state bucket..."
-        aws s3api delete-bucket --bucket grad-vault-tfstate --region us-east-1
