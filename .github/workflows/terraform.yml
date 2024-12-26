@@ -43,7 +43,7 @@ jobs:
         fi
 
     # Update Apply condition to check PR title
-    - name: Terraform Apply
+    - name:  Terraform Apply
       if: |
         github.event_name == 'pull_request' && 
         steps.check_apply.outputs.should_apply == 'true'
