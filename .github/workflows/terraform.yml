@@ -2,18 +2,15 @@ name: "Terraform CI/CD"
 
 on:
   pull_request:
-    branches: [ main ]    # Runs on PRs to main
-  push:
-    branches: [ main ]    # Runs when PR is merged to main
-  workflow_dispatch:      # Manual trigger for destroy
+    branches: [ main ]    # Runs terraform apply on PRs to main
+  workflow_dispatch:      # Manual trigger for destroy only
     inputs:
       action:
         description: 'Terraform Action'
         required: true
-        default: 'apply'
+        default: 'destroy'  # Changed to destroy since this trigger is for destroy only
         type: choice
         options:
-        - apply
         - destroy
 
 jobs:
@@ -32,51 +29,38 @@ jobs:
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
 
-    # Automatic Apply on PR/Push
-    - name: Terraform Apply Steps
-      if: |
-        github.event_name == 'pull_request' || 
-        (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-        (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply')
+    # Automatic Apply on PR to main
+    - name: Terraform Apply
+      if: github.event_name == 'pull_request'
       run: |
         cd terraform
         
         echo "Creating state bucket..."
         aws s3api create-bucket \
           --bucket grad-vault-tfstate \
-          --region us-east-1 || true
+          --region us-west-1 || true
         
         echo "Initializing Terraform..."
-        terraform init
+        terraform init -reconfigure
         
         echo "Planning..."
         terraform plan
         
         echo "Applying..."
-        if terraform apply -auto-approve; then
-          echo "Apply successful"
-        else
-          echo "Apply failed, cleaning up state bucket..."
-          aws s3 rm s3://grad-vault-tfstate/terraform.tfstate || true
-          aws s3api delete-bucket --bucket grad-vault-tfstate --region us-east-1 || true
-          exit 1
-        fi
+        terraform apply -auto-approve
 
     # Manual Destroy Only
-    - name: Terraform Destroy Steps
-      if: github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'destroy'
+    - name: Terraform Destroy
+      if: github.event_name == 'workflow_dispatch'
       run: |
         cd terraform
         
         echo "Initializing Terraform..."
-        terraform init
+        terraform init -reconfigure
         
         echo "Destroying resources..."
-        if terraform destroy -auto-approve; then
-          echo "Destroy successful, cleaning up state..."
-          aws s3 rm s3://grad-vault-tfstate/terraform.tfstate || true
-          aws s3api delete-bucket --bucket grad-vault-tfstate --region us-east-1 || true
-        else
-          echo "Destroy failed"
-          exit 1
-        fi
+        terraform destroy -auto-approve
+        
+        echo "Cleaning up state bucket..."
+        aws s3 rm s3://grad-vault-tfstate/terraform.tfstate || true
+        aws s3api delete-bucket --bucket grad-vault-tfstate --region us-west-1 || true
