@@ -2,8 +2,10 @@ name: "Terraform CI/CD"
 
 on:
   pull_request:
-    branches: [ main ]    # Runs terraform apply on PRs to main
-  workflow_dispatch:      # Manual trigger for destroy only
+    # Runs terraform apply on PRs to main
+    branches: [ main ]    
+  # Manual trigger for destroy only
+  workflow_dispatch:      
     inputs:
       action:
         description: 'Terraform Action'
