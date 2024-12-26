@@ -41,7 +41,7 @@ jobs:
           echo "should_apply=true" >> $GITHUB_OUTPUT
         else
           echo "should_apply=false" >> $GITHUB_OUTPUT
-          echo "No infrastructure changes needed - PR title doesn't contain [infra]"
+          echo "No infrastructure changes needed -  PR title doesn't contain [infra]"
         fi
 
     # Update Apply condition to check PR title
